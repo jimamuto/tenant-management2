@@ -9,11 +9,14 @@ import androidx.navigation.fragment.navArgs
 import com.example.tenantmanagementsystem.databinding.FragmentViewTenantsBinding
 import android.content.Intent
 import android.net.Uri
-import com.example.tenantmanagementsystem.data.repository.TenantRepository
+import androidx.fragment.app.activityViewModels
+import com.example.tenantmanagementsystem.ui.viewmodel.TenantViewModel
 
 class ViewTenantsFragment : Fragment() {
     private var _binding: FragmentViewTenantsBinding? = null
     private val binding get() = _binding!!
+    // The SHARED ViewModel: every Fragment in MainActivity gets the SAME one
+    private val viewModel: TenantViewModel by activityViewModels()
     private val args: ViewTenantsFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -39,12 +42,9 @@ class ViewTenantsFragment : Fragment() {
                 startActivity(intent)
             }
         }
-
-        val tenants = TenantRepository.tenants
-        if (tenants.isEmpty()) {
-            binding.allTenantsTextView.text = "No tenants yet. Add one from the Dashboard."
-        } else {
-            binding.allTenantsTextView.text = tenants.joinToString("\n\n") { it.summary() }
+// OBSERVER: runs now, and again every time allTenantsText changes
+        viewModel.allTenantsText.observe(viewLifecycleOwner) { text ->
+            binding.allTenantsTextView.text = text
         }
     }
 
