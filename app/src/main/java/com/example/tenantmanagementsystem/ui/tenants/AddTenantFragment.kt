@@ -5,16 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.tenantmanagementsystem.databinding.FragmentAddTenantBinding
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import android.util.Log
-import com.example.tenantmanagementsystem.data.model.Tenant
-import com.example.tenantmanagementsystem.data.repository.TenantRepository
+import com.example.tenantmanagementsystem.ui.viewmodel.TenantViewModel
 
 class AddTenantFragment : Fragment() {
     private var _binding: FragmentAddTenantBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: TenantViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +51,12 @@ class AddTenantFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val tenant = Tenant(name, phone, rent)
-            TenantRepository.addTenant(tenant)
-
-            val action = AddTenantFragmentDirections
-                .actionAddTenantFragmentToViewTenantsFragment(tenant)
-            findNavController().navigate(action)
+            val tenant = viewModel.addTenant(name, phone, rent)
+            if (tenant != null) {
+                val action = AddTenantFragmentDirections
+                    .actionAddTenantFragmentToViewTenantsFragment(tenant)
+                findNavController().navigate(action)
+            }
         }
     }
 
