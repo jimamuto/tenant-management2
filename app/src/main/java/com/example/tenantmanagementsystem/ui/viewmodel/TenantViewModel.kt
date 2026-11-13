@@ -11,16 +11,12 @@ import com.example.tenantmanagementsystem.data.model.Tenant
 import com.example.tenantmanagementsystem.data.repository.TenantRepository
 import kotlinx.coroutines.launch
 
-// AndroidViewModel: a ViewModel that receives the Application (safe to keep)
 class TenantViewModel(application: Application) : AndroidViewModel(application) {
-    // Build the data layer once: database → DAO → repository
     private val repository =
         TenantRepository(TenantDatabase.getDatabase(application).tenantDao())
 
-    // ── 1. THE DATA: Room's LiveData, updated whenever the table changes ──
     val tenants: LiveData<List<Tenant>> = repository.tenants
 
-    // ── 2. TRANSFORMATIONS (unchanged from Stage 2) ──
     val tenantCountText: LiveData<String> = tenants.map { list ->
         "Tenants\n${list.size}"
     }
@@ -33,7 +29,6 @@ class TenantViewModel(application: Application) : AndroidViewModel(application) 
         else list.joinToString("\n\n") { it.summary() }
     }
 
-    // Aside: action method if needed directly in ViewModel
     fun addTenant(name: String, phone: String, rent: String): Tenant? {
         val cleanName = name.trim()
         val cleanPhone = phone.trim()
@@ -48,14 +43,12 @@ class TenantViewModel(application: Application) : AndroidViewModel(application) 
         return tenant
     }
 
-    // ── 4. LIFECYCLE LOGS ──
     init {
         Log.d("TENANT_LIFECYCLE", " TenantViewModel: created")
     }
 
-    // ── 5. ON CLEARED ──
     override fun onCleared() {
         super.onCleared()
-        Log.d("TENANT_LIFECYCLE", " TenantViewModel: onCleared")
+        Log.d("TENANT_LIFECYCLE", " TenantViewModel: onDestroy/onCleared")
     }
 }

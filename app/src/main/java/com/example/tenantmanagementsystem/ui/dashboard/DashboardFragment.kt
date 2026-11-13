@@ -1,14 +1,14 @@
 package com.example.tenantmanagementsystem.ui.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.tenantmanagementsystem.databinding.FragmentDashboardBinding
 import androidx.navigation.fragment.findNavController
-import android.util.Log
+import com.example.tenantmanagementsystem.databinding.FragmentDashboardBinding
 import com.example.tenantmanagementsystem.ui.viewmodel.TenantViewModel
 
 class DashboardFragment : Fragment() {
