@@ -5,23 +5,24 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.tenantmanagementsystem.data.model.Tenant
-// Which tables the database holds, and its version number
-@Database(entities = [Tenant::class], version = 1)
+
+@Database(entities = [Tenant::class], version = 1, exportSchema = false)
 abstract class TenantDatabase : RoomDatabase() {
     abstract fun tenantDao(): TenantDao
+
     companion object {
-        // Only ONE database object for the whole app
         @Volatile
         private var INSTANCE: TenantDatabase? = null
+
         fun getDatabase(context: Context): TenantDatabase {
             return INSTANCE ?: synchronized(this) {
-                val database = Room.databaseBuilder(
-                    context.applicationContext, // the whole app, not one screen
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
                     TenantDatabase::class.java,
-                    "tenant_database" // the file name on the phone
+                    "tenant_database"
                 ).build()
-                INSTANCE = database
-                database
+                INSTANCE = instance
+                instance
             }
         }
     }

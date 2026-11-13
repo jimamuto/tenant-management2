@@ -4,7 +4,7 @@ plugins {
     // NEW: switch Safe Args on for this app.
     // It must come BELOW the android.application line
     id("androidx.navigation.safeargs.kotlin")
-    alias(libs.plugins.ksp)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -54,18 +54,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material)
+
+    // Room components with KSP
+    val roomVersion = "2.8.5"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    // Architecture Components: ViewModel and LiveData
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
-// Gives Fragments "by activityViewModels()" (used in Stage 4)
-    implementation("androidx.fragment:fragment-ktx:1.8.5")
-
-    // Room: the local database library
-    implementation("androidx.room:room-runtime:2.8.5")
-    implementation("androidx.room:room-ktx:2.8.5")
-// Generates the Room code (ksp, not implementation)
-    ksp("androidx.room:room-compiler:2.8.5")
 }

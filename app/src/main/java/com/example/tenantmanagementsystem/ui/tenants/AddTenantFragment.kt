@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.tenantmanagementsystem.databinding.FragmentAddTenantBinding
 import com.example.tenantmanagementsystem.ui.viewmodel.TenantViewModel
@@ -15,8 +15,7 @@ import com.example.tenantmanagementsystem.ui.viewmodel.TenantViewModel
 class AddTenantFragment : Fragment() {
     private var _binding: FragmentAddTenantBinding? = null
     private val binding get() = _binding!!
-    // The SHARED ViewModel: every Fragment in MainActivity gets the SAME one
-    private val viewModel: TenantViewModel by activityViewModels()
+    private val viewModel: TenantViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,21 +37,26 @@ class AddTenantFragment : Fragment() {
         Log.d("TENANT_LIFECYCLE", "AddTenantFragment: onViewCreated")
 
         binding.saveButton.setOnClickListener {
-            // UI JOB: collect the input. The ViewModel trims, checks and saves it
-            val tenant = viewModel.addTenant(
-                binding.tenantNameEditText.text.toString(),
-                binding.phoneEditText.text.toString(),
-                binding.rentEditText.text.toString()
-            )
-            // null = rejected. UI JOB: tell the user
-            if (tenant == null) {
+            val name = binding.tenantNameEditText.text.toString().trim()
+            val phone = binding.phoneEditText.text.toString().trim()
+            val rent = binding.rentEditText.text.toString().trim()
+
+            if (name.isEmpty() || phone.isEmpty() || rent.isEmpty()) {
                 Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            // UI JOB: navigate with Safe Args (unchanged)
-            val action = AddTenantFragmentDirections
-                .actionAddTenantFragmentToViewTenantsFragment(tenant)
-            findNavController().navigate(action)
+
+            if (phone.length < 10) {
+                binding.phoneEditText.error = "Enter a valid phone number"
+                return@setOnClickListener
+            }
+
+            val tenant = viewModel.addTenant(name, phone, rent)
+            if (tenant != null) {
+                val action = AddTenantFragmentDirections
+                    .actionAddTenantFragmentToViewTenantsFragment(tenant)
+                findNavController().navigate(action)
+            }
         }
     }
 
